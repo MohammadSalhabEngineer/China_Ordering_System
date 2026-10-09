@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Pencil, SlidersHorizontal } from "lucide-react";
+import { Pencil, SlidersHorizontal, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
 import { fetchItem, fetchMovements, useAsync, itemName, personName, shortRef } from "../lib/data";
 import { supabase, explainError } from "../lib/supabase";
+import { uploadItemPhoto, removeItemPhoto } from "../lib/photos";
 import { useAuth } from "../lib/auth";
 import { Header } from "../components/Header";
 import { ErrorBox, Field, Loading, Photo, Sheet, Spinner, StockBadge, Toast } from "../components/ui";
@@ -24,7 +25,8 @@ export default function ItemPage() {
   if (item.error || !item.data) return <ErrorBox error={item.error} onRetry={() => item.reload()} />;
   const it = item.data;
   const cost = Number(it.landed_cost_usd ?? it.cost_usd);
-  const sold = (moves.data ?? []).filter((m) => m.reason === "sale").reduce((s, m) => s - m.delta, 0);
+  // net sold = units sold minus units returned by cancelled sales
+  const sold = (moves.data ?? []).reduce((s, m) => (m.reason === "sale" ? s - m.delta : m.reason === "void" ? s - m.delta : s), 0);
 
   function refresh() {
     void item.reload(true);
@@ -45,6 +47,15 @@ export default function ItemPage() {
         }
       />
       <Photo path={it.photo_path} alt={itemName(it, i18n.language)} className="w-full aspect-square max-h-[60vw] sm:max-h-80 object-contain bg-white" />
+      {isOwner && (
+        <PhotoEditor
+          item={it}
+          onChanged={(msg) => {
+            setToast(msg);
+            refresh();
+          }}
+        />
+      )}
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -64,8 +75,9 @@ export default function ItemPage() {
           <Stat label={t("stock.left", { count: it.stock_qty })} value={`${int(it.stock_qty)} / ${int(it.initial_qty)}`} />
           <Stat label={t("stock.sold", { count: sold })} value={int(sold)} />
           <Stat label={t("stock.sellPrice")} value={money(it.default_price_usd)} />
-          {isOwner && <Stat label={t("stock.cost")} value={money(cost)} />}
+          {isOwner && <Stat label={t("stock.landedCost")} value={money(cost)} />}
           {isOwner && <Stat label={t("stock.profitPerPc")} value={money(Number(it.default_price_usd) - cost)} />}
+          {isOwner && it.landed_cost_usd != null && <Stat label={t("stock.goodsCost")} value={money(it.cost_usd)} />}
           {it.cartons != null && <Stat label={t("stock.cartons")} value={`${int(it.cartons)} × ${int(it.qty_per_carton)} ${t("stock.perCarton")}`} />}
           {it.page_no != null && <Stat label={t("stock.sheetRef")} value={t("stock.page", { page: it.page_no })} />}
         </dl>
@@ -89,7 +101,7 @@ export default function ItemPage() {
                     {t(`stock.reasons.${m.reason}`)}
                     {m.ref_sale_id && (
                       <Link to={`/history/${m.ref_sale_id}`} className="text-brand ms-2 underline">
-                        {t("history.receipt", { no: "" }).replace(/#\s*$/, "")}→
+                        {t("history.viewReceipt")}
                       </Link>
                     )}
                   </p>
@@ -132,6 +144,71 @@ export default function ItemPage() {
       )}
       <Toast message={toast} onDone={() => setToast(null)} />
     </>
+  );
+}
+
+/** Owner-only: replace the photo from the camera or gallery, or remove it. */
+function PhotoEditor({ item, onChanged }: { item: Item; onChanged: (msg: string) => void }) {
+  const { t } = useTranslation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await uploadItemPhoto(item.id, item.sheet_ref, file);
+      onChanged(t("common.save"));
+    } catch (err) {
+      const ex = explainError(err);
+      setError(t(ex.key, ex.args));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove() {
+    if (!window.confirm(t("stock.removePhoto") + "?")) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await removeItemPhoto(item.id, item.photo_path);
+      onChanged(t("stock.removePhoto"));
+    } catch (err) {
+      const ex = explainError(err);
+      setError(t(ex.key, ex.args));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="px-4 pt-3">
+      <div className="flex gap-2">
+        <label className={`btn-secondary grow text-sm ${busy ? "opacity-50 pointer-events-none" : ""}`}>
+          <Camera size={18} /> {t("stock.takePhoto")}
+          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} disabled={busy} />
+        </label>
+        <label className={`btn-secondary grow text-sm ${busy ? "opacity-50 pointer-events-none" : ""}`}>
+          <ImageIcon size={18} /> {t("stock.choosePhoto")}
+          <input type="file" accept="image/*" className="hidden" onChange={onFile} disabled={busy} />
+        </label>
+        {item.photo_path && (
+          <button className="btn-secondary text-bad text-sm" onClick={remove} disabled={busy} aria-label={t("stock.removePhoto")}>
+            <Trash2 size={18} />
+          </button>
+        )}
+      </div>
+      {busy && (
+        <p className="text-xs text-muted mt-2 flex items-center gap-2">
+          <Spinner className="!w-4 !h-4" /> {t("stock.uploading")}
+        </p>
+      )}
+      {error && <p className="text-xs text-bad mt-2">{error}</p>}
+    </div>
   );
 }
 
@@ -247,11 +324,11 @@ function EditSheet({ open, item, onClose, onDone }: { open: boolean; item: Item;
         <Field label={t("stock.sellPrice")}>
           <input className="input" type="number" inputMode="decimal" step="0.01" value={f.default_price_usd} onChange={set("default_price_usd")} />
         </Field>
-        <Field label={t("stock.cost")}>
-          <input className="input" type="number" inputMode="decimal" step="0.01" value={f.cost_usd} onChange={set("cost_usd")} />
-        </Field>
-        <Field label={`${t("stock.landedCost")} (${t("common.optional")})`}>
+        <Field label={t("stock.landedCost")} hint={t("stock.profitPerPc") + " = " + t("stock.sellPrice") + " − " + t("stock.landedCost")}>
           <input className="input" type="number" inputMode="decimal" step="0.01" value={f.landed_cost_usd} onChange={set("landed_cost_usd")} />
+        </Field>
+        <Field label={`${t("stock.goodsCost")} (${t("common.optional")})`}>
+          <input className="input" type="number" inputMode="decimal" step="0.01" value={f.cost_usd} onChange={set("cost_usd")} />
         </Field>
         <Field label={`${t("sell.note")} (${t("common.optional")})`}>
           <input className="input" value={f.needs_review} onChange={set("needs_review")} />

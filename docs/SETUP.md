@@ -70,4 +70,5 @@ Then **Settings → Add a person** for each family member: name, login name, rol
 - **Which phone**: the app records a nickname per phone plus what the browser reports. iPhones only report "iPhone" (Apple hides the model from websites); Android phones usually report the exact model. The reliable "who" is the login.
 - **Backups**: Settings → Export to Excel downloads everything. Do it weekly.
 - The big supplier catalog PDF is not part of the app; only the order sheet was imported.
-- Cost basis: the sheet's USD price per piece. If you want profit to include shipping, the owner can fill **Landed cost** per item; profit then uses it.
+- Cost basis: the sheet's blue column ("+ MARKUP", the landed cost including shipping, totalling $70,000). The green column is the selling price. Profit = selling price − landed cost. The plain "USD price / pc" (goods only) is kept for reference.
+- Database changes after the first setup live in `supabase/migrations/0002_*.sql` and later; paste each new file into the SQL editor once.

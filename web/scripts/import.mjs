@@ -57,8 +57,9 @@ for (const r of rows) {
     page_no: r.page,
     cartons: r.cartons,
     qty_per_carton: r.qty_per_carton,
-    cost_usd: r.cost_usd ?? 0,
-    default_price_usd: r.price_usd ?? 0,
+    cost_usd: r.cost_usd ?? 0,                 // goods only
+    landed_cost_usd: r.landed_cost_usd ?? null, // blue column, incl. shipping — profit uses this
+    default_price_usd: r.sell_price_usd ?? 0,   // green column
     rmb_price: r.rmb_price,
     cbm: r.cbm,
     weight_kg: r.weight_kg,

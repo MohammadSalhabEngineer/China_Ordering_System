@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { fetchSales, useAsync, personName, itemName } from "../lib/data";
+import { fetchSales, useAsync, personName, itemName, type VoidedFilter } from "../lib/data";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { Header } from "../components/Header";
@@ -17,8 +17,12 @@ export default function HistoryPage() {
   const [seller, setSeller] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [range, setRange] = useState<Range>("30");
+  const [voided, setVoided] = useState<VoidedFilter>("no");
   const since = useMemo(() => (range === "all" ? undefined : new Date(Date.now() - Number(range) * 86400e3)), [range]);
-  const sales = useAsync(() => fetchSales({ sellerId: seller || undefined, since, status: status || undefined }), [seller, status, since]);
+  const sales = useAsync(
+    () => fetchSales({ sellerId: seller || undefined, since, status: status || undefined, voided }),
+    [seller, status, since, voided],
+  );
   const people = useAsync(async () => {
     const { data } = await supabase.from("profiles").select("id, display_name, display_name_ar").order("display_name");
     return (data ?? []) as Pick<Profile, "id" | "display_name" | "display_name_ar">[];
@@ -37,7 +41,12 @@ export default function HistoryPage() {
   return (
     <>
       <Header title={t("history.title")}>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
+          <select className={sel} value={voided} onChange={(e) => setVoided(e.target.value as VoidedFilter)} aria-label={t("history.statusActive")}>
+            <option value="no">{t("history.statusActive")}</option>
+            <option value="yes">{t("history.statusCancelled")}</option>
+            <option value="all">{t("history.statusAll")}</option>
+          </select>
           <select className={sel} value={seller} onChange={(e) => setSeller(e.target.value)} aria-label={t("history.filterSeller")}>
             <option value="">{t("history.filterSeller")}: {t("common.all")}</option>
             {profile && <option value={profile.id}>{t("common.me")}</option>}

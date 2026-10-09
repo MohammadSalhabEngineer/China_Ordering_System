@@ -47,6 +47,17 @@ export default function SettingsPage() {
     await supabase.from("profiles").update({ role }).eq("id", p.id);
     void people.reload(true);
   }
+  async function deleteUser(p: Profile) {
+    if (!window.confirm(t("settings.deleteConfirm", { name: personName(p, i18n.language) }))) return;
+    const { error } = await supabase.rpc("delete_user", { p_user_id: p.id });
+    if (error) {
+      const ex = explainError(error);
+      setToast(t(ex.key, ex.args));
+      return;
+    }
+    setToast(t("settings.deleted"));
+    void people.reload(true);
+  }
   async function removeInvite(slug: string) {
     await supabase.from("invites").delete().eq("login_slug", slug);
     void invites.reload(true);
@@ -133,6 +144,11 @@ export default function SettingsPage() {
                       <button className="btn-secondary py-1 px-2 text-xs" onClick={() => void toggleActive(p)}>
                         {p.active ? t("settings.deactivate") : t("settings.activate")}
                       </button>
+                      {!p.active && (
+                        <button className="btn-danger py-1 px-2 text-xs" onClick={() => void deleteUser(p)}>
+                          {t("settings.deleteUser")}
+                        </button>
+                      )}
                     </>
                   )}
                 </li>

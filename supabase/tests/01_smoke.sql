@@ -78,4 +78,20 @@ select public.adjust_stock('aaaaaaaa-0000-0000-0000-000000000001', -3, 'damaged'
 \set ON_ERROR_STOP on
 select sheet_ref, stock_qty from public.items order by sheet_ref;
 select display_name, role from public.profiles order by display_name;
+
+\echo '--- delete_user: refuses active / with history, deletes a clean deactivated user'
+set role postgres;
+insert into public.invites (login_slug, display_name, role) values ('tmp', 'Temp', 'seller');
+insert into auth.users (id, email) values ('44444444-4444-4444-4444-444444444444', 'tmp@family.local');
+set role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
+\set ON_ERROR_STOP off
+select public.delete_user('44444444-4444-4444-4444-444444444444');   -- still active -> DEACTIVATE_FIRST
+update public.profiles set active = false where id in ('44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222');
+select public.delete_user('22222222-2222-2222-2222-222222222222');   -- Sara has sales -> HAS_HISTORY
+\set ON_ERROR_STOP on
+select public.delete_user('44444444-4444-4444-4444-444444444444');
+select count(*) as profiles_left from public.profiles;
+set role postgres;
+select count(*) as auth_users_left from auth.users;
 reset role;

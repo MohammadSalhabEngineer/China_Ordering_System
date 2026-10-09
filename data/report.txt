@@ -1,4 +1,4 @@
-rows=369 with_photo=365 cartons=580.0 total_qty=30998.0 rmb_total=295,244.70 total_cost_usd=44,000.71 total_price_usd=69,690.73
+rows=369 with_photo=365 cartons=580.0 total_qty=30998.0 rmb_total=295,244.70 goods_cost_usd=44,000.71 landed_cost_usd=69,690.73 sell_value_usd=139,387.68
 
 page 1: row Bassel 2-6 has 2 images (xref 30 and 30); keeping first
 page 2: row Bassel 2-17 has 2 images (xref 42 and 43); keeping first
@@ -11,7 +11,8 @@ page 9: row Bassel 6-10 has no photo
 page 11: row Bassel 9-1 has 2 images (xref 147 and 148); keeping first
 page 12: row Bassel 9-12 has 2 images (xref 163 and 164); keeping first
 page 12: row Bassel 9-7 unit cost derived from total
-page 12: row Bassel 9-7 unit price derived from total
+page 12: row Bassel 9-7 landed cost derived from total
+page 12: row Bassel 9-7 sell price derived as 2x landed cost
 page 14: row Bassel 10-24 has no photo
 page 15: row Bassel 10-30 has no photo
 page 16: row Bassel 12-1 has 2 images (xref 224 and 225); keeping first

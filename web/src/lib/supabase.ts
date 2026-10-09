@@ -24,6 +24,8 @@ export function explainError(err: unknown): { key: string; args?: Record<string,
   const m = /INSUFFICIENT_STOCK:([^:]+):(\d+)/.exec(msg);
   if (m) return { key: "errors.insufficientStock", args: { item: m[1], left: m[2] } };
   if (msg.includes("NOT_INVITED")) return { key: "errors.notInvited" };
+  if (msg.includes("HAS_HISTORY")) return { key: "errors.hasHistory" };
+  if (msg.includes("DEACTIVATE_FIRST")) return { key: "errors.deactivateFirst" };
   if (msg.includes("Invalid login credentials")) return { key: "errors.badPin" };
   if (msg.includes("not allowed") || msg.includes("owner only")) return { key: "errors.notAllowed" };
   if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) return { key: "errors.offline" };

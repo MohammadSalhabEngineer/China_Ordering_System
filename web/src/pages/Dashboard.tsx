@@ -10,8 +10,6 @@ import { Empty, ErrorBox, Loading, Photo } from "../components/ui";
 import { dayKey, int, money, pct } from "../lib/format";
 import type { SaleWithLines } from "../types";
 
-const TARGET_USD = 70000;
-
 export default function DashboardPage() {
   const { t, i18n } = useTranslation();
   const { isOwner, profile } = useAuth();
@@ -82,6 +80,8 @@ export default function DashboardPage() {
   }, [live]);
 
   const stockValue = (items.data ?? []).reduce((s, i) => s + i.stock_qty * Number(i.landed_cost_usd ?? i.cost_usd), 0);
+  // sales target = everything in the container sold at its list price
+  const targetUsd = (items.data ?? []).reduce((s, i) => s + i.initial_qty * Number(i.default_price_usd), 0);
   const lowItems = (items.data ?? []).filter((i) => i.stock_qty > 0 && i.stock_qty <= Math.max(2, Math.ceil(i.initial_qty * 0.2))).length;
   const outItems = (items.data ?? []).filter((i) => i.stock_qty <= 0).length;
   const owed = (receivables.data ?? []).filter((r) => isOwner || r.seller_id === profile?.id);
@@ -96,7 +96,7 @@ export default function DashboardPage() {
       <div className="p-4 space-y-4">
         {!isOwner && <p className="text-xs text-muted">{t("dashboard.sellerOnlyHint")}</p>}
         <div className="grid grid-cols-2 gap-3">
-          <Tile label={t("dashboard.revenue")} value={money(totals.revenue)} sub={isOwner ? t("dashboard.ofTarget", { target: pct(totals.revenue, TARGET_USD) }) : undefined} />
+          <Tile label={t("dashboard.revenue")} value={money(totals.revenue)} sub={isOwner && targetUsd ? t("dashboard.ofTarget", { target: pct(totals.revenue, targetUsd) }) : undefined} />
           <Tile label={t("dashboard.profit")} value={money(totals.profit)} sub={totals.revenue ? `${pct(totals.profit, totals.revenue)} ${t("dashboard.margin")}` : undefined} tone="ok" />
           <Tile label={t("dashboard.units")} value={int(totals.units)} sub={`${int(totals.count)} ${t("dashboard.sales").toLowerCase()}`} />
           <Tile label={t("dashboard.receivables")} value={money(owedTotal)} tone={owedTotal > 0 ? "warn" : undefined} sub={owed.length ? `${owed.length}` : undefined} />

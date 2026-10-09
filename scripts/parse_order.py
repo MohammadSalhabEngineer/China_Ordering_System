@@ -35,9 +35,9 @@ COLS = [
     ("total_cbm", 392, 430),
     ("weight_kg", 430, 462),
     ("total_weight_kg", 462, 500),
-    ("cost_usd", 500, 548),
-    ("price_usd", 548, 600),
-    ("profit_usd", 600, 650),
+    ("cost_usd", 500, 548),        # "USD PRICE / PC": goods only (white column)
+    ("landed_cost_usd", 548, 600), # "+ MARKUP" (blue column): landed cost incl. shipping, totals $70,000
+    ("sell_price_usd", 600, 650),  # green column: selling price
     ("total_cost_usd", 650, 700),
     ("total_price_usd", 700, 792),
 ]
@@ -202,9 +202,12 @@ def parse_page(page: pymupdf.Page, pno: int, rows_out: list, report: list):
             if out["cost_usd"] is None and out["total_cost_usd"] is not None:
                 out["cost_usd"] = round(out["total_cost_usd"] / q, 2)
                 report.append(f"page {pno}: row {ref} unit cost derived from total")
-            if out["price_usd"] is None and out["total_price_usd"] is not None:
-                out["price_usd"] = round(out["total_price_usd"] / q, 2)
-                report.append(f"page {pno}: row {ref} unit price derived from total")
+            if out["landed_cost_usd"] is None and out["total_price_usd"] is not None:
+                out["landed_cost_usd"] = round(out["total_price_usd"] / q, 2)
+                report.append(f"page {pno}: row {ref} landed cost derived from total")
+            if out["sell_price_usd"] is None and out["landed_cost_usd"] is not None:
+                out["sell_price_usd"] = round(out["landed_cost_usd"] * 2, 2)
+                report.append(f"page {pno}: row {ref} sell price derived as 2x landed cost")
         if re.search(r"\d[b-h]$", ref):
             out["needs_review"] = "row had no 'Bassel N-M' number on the sheet; named after the row above"
             report.append(f"page {pno}: row {ref} named after previous row (no sheet ref)")
@@ -256,12 +259,13 @@ def main():
     tc = sum(r["cartons"] or 0 for r in rows)
     tq = sum(r["total_qty"] or 0 for r in rows)
     tcost = sum(r["total_cost_usd"] or 0 for r in rows)
-    tprice = sum(r["total_price_usd"] or 0 for r in rows)
+    tprice = sum(r["total_price_usd"] or 0 for r in rows)  # sheet's "TOTAL USD + MARKUP" = landed total
+    tsell = sum((r["sell_price_usd"] or 0) * (r["total_qty"] or 0) for r in rows)
     trmb = sum(r["rmb_total"] or 0 for r in rows)
     summary = (
         f"rows={len(rows)} with_photo={sum(1 for r in rows if r['photo'])} "
         f"cartons={tc} total_qty={tq} rmb_total={trmb:,.2f} "
-        f"total_cost_usd={tcost:,.2f} total_price_usd={tprice:,.2f}"
+        f"goods_cost_usd={tcost:,.2f} landed_cost_usd={tprice:,.2f} sell_value_usd={tsell:,.2f}"
     )
     print(summary)
     (OUT / "items.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")

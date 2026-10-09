@@ -63,11 +63,21 @@ export async function fetchMovements(itemId: string): Promise<StockMovement[]> {
 export const SALE_SELECT =
   "*, sale_lines(*, items(sheet_ref, item_no, description_en, description_ar, photo_path)), profiles:seller_id(display_name, display_name_ar), devices:device_id(nickname, device_label)";
 
-export async function fetchSales(opts: { sellerId?: string; since?: Date; status?: string; limit?: number }): Promise<SaleWithLines[]> {
+export type VoidedFilter = "no" | "yes" | "all";
+
+export async function fetchSales(opts: {
+  sellerId?: string;
+  since?: Date;
+  status?: string;
+  voided?: VoidedFilter;
+  limit?: number;
+}): Promise<SaleWithLines[]> {
   let q = supabase.from("sales").select(SALE_SELECT).order("sold_at", { ascending: false }).limit(opts.limit ?? 300);
   if (opts.sellerId) q = q.eq("seller_id", opts.sellerId);
   if (opts.since) q = q.gte("sold_at", opts.since.toISOString());
-  if (opts.status) q = q.eq("payment_status", opts.status).eq("voided", false);
+  if (opts.status) q = q.eq("payment_status", opts.status);
+  const v = opts.voided ?? "no";
+  if (v !== "all") q = q.eq("voided", v === "yes");
   return unwrap(await q);
 }
 
