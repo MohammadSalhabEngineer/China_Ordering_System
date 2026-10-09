@@ -1,0 +1,46 @@
+name: Keep database awake
+
+# Supabase free projects pause after 7 days without API activity. This pings the
+# database daily with the same harmless call the login page makes. GitHub stops
+# scheduled workflows after 60 days without commits, so once a month it also
+# commits a timestamp to keep itself alive.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" -d '{}' \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/rpc/list_login_names")
+          echo "Supabase answered HTTP $status"
+          if [ "$status" != "200" ]; then
+            echo "::error::Database did not answer. If it was paused, open the Supabase dashboard and click Restore."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        if: github.event_name == 'schedule'
+
+      - name: Monthly commit so this schedule never gets disabled
+        if: github.event_name == 'schedule'
+        run: |
+          if [ "$(date -u +%d)" = "01" ]; then
+            date -u +%Y-%m-%d > .github/keepalive.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .github/keepalive.txt
+            git commit -m "chore: keepalive $(date -u +%Y-%m)" || exit 0
+            git push
+          else
+            echo "Not the 1st of the month, no commit needed."
+          fi

@@ -65,8 +65,8 @@ Then **Settings → Add a person** for each family member: name, login name, rol
 
 ## Things to know
 
-- **Free Supabase projects pause after 7 days with no activity.** Opening the app counts as activity. If it ever pauses, go to the Supabase dashboard and click **Restore**; nothing is lost.
-- **Forgotten PIN**: the owner opens Supabase → **Authentication → Users**, finds `<loginname>@family.local`, and uses "Reset password" / "Send password recovery" is not usable (no real email), so instead click the user → **Update password** and set a new 6-digit PIN. Anyone can change their own PIN inside the app (Settings → Change my PIN).
+- **Free Supabase projects pause after 7 days with no activity.** A scheduled GitHub job (`.github/workflows/keepalive.yml`) pings the database every day so this never happens. If the job ever fails (red run under Actions, GitHub emails you), open the Supabase dashboard and click **Restore**; nothing is lost.
+- **Forgotten PIN**: the owner opens Supabase → **Authentication → Users**, clicks the user `<loginname>@family.local` → **Update password**, and sets a new 6-digit PIN. (Email recovery can't work because the addresses aren't real.) Anyone can change their own PIN inside the app (Settings → Change my PIN).
 - **Which phone**: the app records a nickname per phone plus what the browser reports. iPhones only report "iPhone" (Apple hides the model from websites); Android phones usually report the exact model. The reliable "who" is the login.
 - **Backups**: Settings → Export to Excel downloads everything. Do it weekly.
 - The big supplier catalog PDF is not part of the app; only the order sheet was imported.
