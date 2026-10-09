@@ -1,0 +1,71 @@
+{
+  "app": { "name": "Container Sales" },
+  "nav": { "sell": "Sell", "stock": "Stock", "history": "History", "dashboard": "Dashboard", "settings": "Settings" },
+  "common": {
+    "save": "Save", "cancel": "Cancel", "close": "Close", "back": "Back", "search": "Search", "loading": "Loading…",
+    "retry": "Retry", "yes": "Yes", "no": "No", "all": "All", "none": "None", "ok": "OK", "edit": "Edit", "delete": "Delete",
+    "qty": "Qty", "price": "Price", "total": "Total", "each": "each", "pcs": "pcs", "usd": "$", "today": "Today", "yesterday": "Yesterday",
+    "optional": "optional", "required": "required", "nothingHere": "Nothing here yet", "unknown": "Unknown", "more": "More", "less": "Less",
+    "confirm": "Confirm", "refresh": "Refresh", "me": "Me", "noPhoto": "No photo", "notConfigured": "The app is not connected to a database yet. See docs/SETUP.md."
+  },
+  "login": {
+    "title": "Who are you?", "subtitle": "Tap your name, then enter your PIN", "pin": "PIN", "enter": "Sign in",
+    "forgot": "Forgot your PIN? Ask the owner.", "changeUser": "Not you?", "noUsers": "No users yet. The owner must create the first account.",
+    "firstUser": "Create the owner account", "firstUserHint": "This is done once. The first account becomes the owner.",
+    "name": "Name", "nameAr": "Name in Arabic", "loginName": "Login name (letters only)", "newPin": "6-digit PIN", "create": "Create",
+    "deviceTitle": "Name this phone", "deviceHint": "So everyone can see which phone made a change. Example: Hasan's iPhone",
+    "deviceDetected": "Detected: {{label}}", "deviceName": "Phone name", "signingIn": "Signing in…"
+  },
+  "sell": {
+    "title": "Sell", "searchPlaceholder": "Search by code or name…", "cart": "Cart", "emptyCart": "Tap items to add them to the sale",
+    "addToSale": "Add to sale", "inStock": "{{count}} in stock", "outOfStock": "Out of stock", "lowStock": "Low",
+    "customer": "Customer", "customerPlaceholder": "Customer name", "location": "Location", "locationPlaceholder": "City / area",
+    "note": "Note", "paid": "Amount received", "paidFull": "Paid in full", "paidNone": "Not paid yet", "paidPartial": "Partial",
+    "saveSale": "Save sale", "saving": "Saving…", "saved": "Sale saved", "savedDetail": "#{{no}} · {{total}} · stock updated",
+    "newSale": "New sale", "viewSale": "View receipt", "total": "Total", "lines": "{{count}} line", "lines_other": "{{count}} lines",
+    "maxStock": "Only {{count}} left", "unitPrice": "Unit price", "suggested": "Suggested {{price}}", "remove": "Remove",
+    "category": "Category", "sortBy": "Sort", "sortRef": "Sheet order", "sortName": "Name", "sortStock": "Stock"
+  },
+  "stock": {
+    "title": "Stock", "filterAll": "All", "filterLow": "Low", "filterOut": "Out", "left": "{{count}} left", "of": "of {{total}}",
+    "sold": "Sold {{count}}", "value": "Stock value", "items": "{{count}} item", "items_other": "{{count}} items",
+    "cost": "Cost", "sellPrice": "Sell price", "landedCost": "Landed cost (incl. shipping)", "profitPerPc": "Profit / pc", "cartons": "Cartons",
+    "perCarton": "per carton", "history": "History", "movements": "Movements", "adjust": "Adjust stock", "adjustHint": "Owner only: returns, damaged goods, recount.",
+    "delta": "Change (+ or −)", "reason": "Reason", "reasons": { "adjustment": "Recount / correction", "return": "Returned", "damaged": "Damaged", "sale": "Sale", "void": "Sale cancelled", "initial": "Opening stock" },
+    "needsReview": "Imported with a note: {{note}}", "editItem": "Edit item", "nameEn": "Name (English)", "nameAr": "Name (Arabic)", "code": "Code", "sheetRef": "Sheet ref",
+    "page": "Sheet page {{page}}", "noItems": "No items match", "chinese": "Original (Chinese)"
+  },
+  "history": {
+    "title": "History", "filterSeller": "Seller", "filterStatus": "Payment", "filterDate": "Date", "allTime": "All time", "last7": "Last 7 days", "last30": "Last 30 days",
+    "receipt": "Receipt #{{no}}", "soldBy": "Sold by {{name}}", "on": "on {{device}}", "to": "to {{customer}}", "at": "in {{location}}",
+    "void": "Cancel this sale", "voidReason": "Why is it cancelled?", "voidConfirm": "Stock will be put back. This cannot be undone.", "voided": "Cancelled",
+    "voidedBy": "Cancelled by {{name}}: {{reason}}", "addPayment": "Record payment", "paymentAmount": "Amount", "due": "Due {{amount}}",
+    "payments": "Payments", "noSales": "No sales yet", "unknownDevice": "unknown phone", "walkIn": "Walk-in customer", "device": "Device"
+  },
+  "payment": { "paid": "Paid", "partial": "Partial", "unpaid": "Unpaid" },
+  "dashboard": {
+    "title": "Dashboard", "revenue": "Revenue", "profit": "Profit", "units": "Units sold", "sales": "Sales", "stockValue": "Stock left (at cost)",
+    "receivables": "Owed to us", "bySeller": "By seller", "topItems": "Top items", "perDay": "Sales per day", "last30": "Last 30 days",
+    "owes": "{{customer}} owes {{amount}}", "noData": "No sales yet", "ofTarget": "of {{target}} target", "margin": "margin",
+    "soldOut": "Sold out", "lowStockItems": "Low stock items", "sellerOnlyHint": "You see your own numbers. The owner sees everyone."
+  },
+  "settings": {
+    "title": "Settings", "language": "Language", "english": "English", "arabic": "العربية", "signOut": "Sign out", "signedInAs": "Signed in as {{name}}",
+    "thisPhone": "This phone", "renamePhone": "Rename this phone", "users": "People", "addUser": "Add a person", "role": "Role", "owner": "Owner", "seller": "Seller",
+    "pendingInvite": "Invited, hasn't signed in yet", "deactivate": "Deactivate", "activate": "Activate", "inviteHint": "Give them the login name and PIN. They sign in on their phone.",
+    "invited": "Added. {{name}} can now sign in with login name \"{{slug}}\".", "changePin": "Change my PIN", "currentPin": "Current PIN", "pinChanged": "PIN changed",
+    "export": "Export to Excel", "exporting": "Preparing file…", "exportHint": "Downloads sales, lines, stock and movements as one .xlsx file.",
+    "about": "About", "version": "Version", "install": "Add to home screen", "installHint": "Share → Add to Home Screen (iPhone) or ⋮ → Install app (Android)",
+    "removeInvite": "Remove invite", "setPinFor": "Set PIN for {{name}}", "pinHint": "The person uses this 6-digit PIN to sign in.", "slugTaken": "That login name is already used"
+  },
+  "errors": {
+    "insufficientStock": "Not enough stock for {{item}} (only {{left}} left)", "notInvited": "This name was not added by the owner yet",
+    "badPin": "Wrong PIN", "notAllowed": "You are not allowed to do that", "offline": "No internet connection", "generic": "Something went wrong: {{message}}",
+    "pinLength": "PIN must be 6 digits", "slugFormat": "Login name: 2–20 letters or digits, no spaces", "required": "This field is required"
+  },
+  "categories": {
+    "dishes": "Dishes & bowls", "glass": "Glassware", "cookware": "Cookware & cutlery", "decor": "Decor", "vases": "Vases & jars",
+    "flowers": "Artificial flowers & plants", "textiles": "Textiles & rugs", "storage": "Storage & baskets", "bathroom": "Bathroom",
+    "cleaning": "Cleaning & household", "lighting": "Lighting", "accessories": "Hair accessories", "other": "Other"
+  }
+}

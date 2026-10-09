@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/LAPTOP~1/AppData/Local/Temp/claude/c--Users-Laptop-Pro-Desktop-China-Ordering-System/db8c545e-4ecf-4c9c-8308-dc76fd7ed801/tasks/**)",
+      "Bash(docker --version)",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)"
+    ]
+  }
+}

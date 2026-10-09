@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0f766e;
+  --color-brand-dark: #115e59;
+  --color-brand-soft: #ccfbf1;
+  --color-paper: #f7f5f0;
+  --color-ink: #1c1917;
+  --color-muted: #78716c;
+  --color-line: #e7e5e4;
+  --color-ok: #15803d;
+  --color-warn: #b45309;
+  --color-bad: #b91c1c;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", "Noto Naskh Arabic", "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--color-paper);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  overscroll-behavior-y: none;
+}
+
+/* keep digits western in both languages so prices read the same everywhere */
+:root {
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}
+
+@layer components {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-semibold select-none transition active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply bg-brand text-white shadow-sm active:bg-brand-dark;
+  }
+  .btn-secondary {
+    @apply bg-white text-ink border border-line shadow-sm;
+  }
+  .btn-danger {
+    @apply bg-bad text-white;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-brand;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted/70 focus:outline-none focus:ring-2 focus:ring-brand/40;
+  }
+  .card {
+    @apply rounded-2xl bg-white border border-line shadow-sm;
+  }
+  .label {
+    @apply block text-sm font-medium text-muted mb-1;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+}

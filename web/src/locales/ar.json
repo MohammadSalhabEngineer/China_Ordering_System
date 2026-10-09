@@ -1,0 +1,71 @@
+{
+  "app": { "name": "مبيعات الحاوية" },
+  "nav": { "sell": "بيع", "stock": "المخزون", "history": "السجل", "dashboard": "التقارير", "settings": "الإعدادات" },
+  "common": {
+    "save": "حفظ", "cancel": "إلغاء", "close": "إغلاق", "back": "رجوع", "search": "بحث", "loading": "جارٍ التحميل…",
+    "retry": "إعادة المحاولة", "yes": "نعم", "no": "لا", "all": "الكل", "none": "لا شيء", "ok": "حسناً", "edit": "تعديل", "delete": "حذف",
+    "qty": "الكمية", "price": "السعر", "total": "المجموع", "each": "للقطعة", "pcs": "قطعة", "usd": "$", "today": "اليوم", "yesterday": "أمس",
+    "optional": "اختياري", "required": "مطلوب", "nothingHere": "لا يوجد شيء بعد", "unknown": "غير معروف", "more": "المزيد", "less": "أقل",
+    "confirm": "تأكيد", "refresh": "تحديث", "me": "أنا", "noPhoto": "بدون صورة", "notConfigured": "التطبيق غير متصل بقاعدة البيانات بعد. راجع docs/SETUP.md."
+  },
+  "login": {
+    "title": "من أنت؟", "subtitle": "اضغط على اسمك ثم أدخل الرمز السري", "pin": "الرمز السري", "enter": "دخول",
+    "forgot": "نسيت الرمز؟ اسأل المسؤول.", "changeUser": "لست أنت؟", "noUsers": "لا يوجد مستخدمون بعد. على المسؤول إنشاء أول حساب.",
+    "firstUser": "إنشاء حساب المسؤول", "firstUserHint": "يتم هذا مرة واحدة فقط. أول حساب يصبح المسؤول.",
+    "name": "الاسم", "nameAr": "الاسم بالعربية", "loginName": "اسم الدخول (أحرف لاتينية فقط)", "newPin": "رمز سري من 6 أرقام", "create": "إنشاء",
+    "deviceTitle": "سمِّ هذا الهاتف", "deviceHint": "ليعرف الجميع أي هاتف قام بالتعديل. مثال: آيفون حسن",
+    "deviceDetected": "تم التعرف: {{label}}", "deviceName": "اسم الهاتف", "signingIn": "جارٍ الدخول…"
+  },
+  "sell": {
+    "title": "بيع", "searchPlaceholder": "ابحث بالرمز أو الاسم…", "cart": "السلة", "emptyCart": "اضغط على المنتجات لإضافتها إلى البيع",
+    "addToSale": "إضافة إلى البيع", "inStock": "{{count}} في المخزون", "outOfStock": "نفد المخزون", "lowStock": "قليل",
+    "customer": "الزبون", "customerPlaceholder": "اسم الزبون", "location": "المكان", "locationPlaceholder": "المدينة / المنطقة",
+    "note": "ملاحظة", "paid": "المبلغ المستلم", "paidFull": "مدفوع بالكامل", "paidNone": "غير مدفوع", "paidPartial": "جزئي",
+    "saveSale": "حفظ البيع", "saving": "جارٍ الحفظ…", "saved": "تم حفظ البيع", "savedDetail": "#{{no}} · {{total}} · تم تحديث المخزون",
+    "newSale": "بيع جديد", "viewSale": "عرض الفاتورة", "total": "المجموع", "lines": "{{count}} صنف", "lines_other": "{{count}} أصناف",
+    "maxStock": "بقي {{count}} فقط", "unitPrice": "سعر القطعة", "suggested": "السعر المقترح {{price}}", "remove": "إزالة",
+    "category": "الفئة", "sortBy": "ترتيب", "sortRef": "ترتيب الجدول", "sortName": "الاسم", "sortStock": "المخزون"
+  },
+  "stock": {
+    "title": "المخزون", "filterAll": "الكل", "filterLow": "قليل", "filterOut": "نفد", "left": "بقي {{count}}", "of": "من {{total}}",
+    "sold": "مباع {{count}}", "value": "قيمة المخزون", "items": "{{count}} صنف", "items_other": "{{count}} أصناف",
+    "cost": "التكلفة", "sellPrice": "سعر البيع", "landedCost": "التكلفة مع الشحن", "profitPerPc": "الربح / قطعة", "cartons": "كراتين",
+    "perCarton": "في الكرتونة", "history": "السجل", "movements": "الحركات", "adjust": "تعديل المخزون", "adjustHint": "للمسؤول فقط: مرتجعات، تالف، إعادة عدّ.",
+    "delta": "التغيير (+ أو −)", "reason": "السبب", "reasons": { "adjustment": "إعادة عدّ / تصحيح", "return": "مرتجع", "damaged": "تالف", "sale": "بيع", "void": "إلغاء بيع", "initial": "المخزون الافتتاحي" },
+    "needsReview": "ملاحظة من الاستيراد: {{note}}", "editItem": "تعديل الصنف", "nameEn": "الاسم (إنجليزي)", "nameAr": "الاسم (عربي)", "code": "الرمز", "sheetRef": "رقم الجدول",
+    "page": "صفحة الجدول {{page}}", "noItems": "لا توجد أصناف مطابقة", "chinese": "الأصل (صيني)"
+  },
+  "history": {
+    "title": "السجل", "filterSeller": "البائع", "filterStatus": "الدفع", "filterDate": "التاريخ", "allTime": "كل الفترة", "last7": "آخر 7 أيام", "last30": "آخر 30 يوماً",
+    "receipt": "فاتورة #{{no}}", "soldBy": "باعها {{name}}", "on": "من {{device}}", "to": "إلى {{customer}}", "at": "في {{location}}",
+    "void": "إلغاء هذا البيع", "voidReason": "ما سبب الإلغاء؟", "voidConfirm": "سيعود المخزون كما كان. لا يمكن التراجع.", "voided": "ملغى",
+    "voidedBy": "ألغاه {{name}}: {{reason}}", "addPayment": "تسجيل دفعة", "paymentAmount": "المبلغ", "due": "المتبقي {{amount}}",
+    "payments": "الدفعات", "noSales": "لا توجد مبيعات بعد", "unknownDevice": "هاتف غير معروف", "walkIn": "زبون عابر", "device": "الجهاز"
+  },
+  "payment": { "paid": "مدفوع", "partial": "جزئي", "unpaid": "غير مدفوع" },
+  "dashboard": {
+    "title": "التقارير", "revenue": "المبيعات", "profit": "الربح", "units": "القطع المباعة", "sales": "عدد المبيعات", "stockValue": "المخزون المتبقي (بالتكلفة)",
+    "receivables": "مستحق لنا", "bySeller": "حسب البائع", "topItems": "الأكثر مبيعاً", "perDay": "المبيعات اليومية", "last30": "آخر 30 يوماً",
+    "owes": "{{customer}} عليه {{amount}}", "noData": "لا توجد مبيعات بعد", "ofTarget": "من الهدف {{target}}", "margin": "هامش",
+    "soldOut": "نفد", "lowStockItems": "أصناف قليلة", "sellerOnlyHint": "ترى أرقامك فقط. المسؤول يرى الجميع."
+  },
+  "settings": {
+    "title": "الإعدادات", "language": "اللغة", "english": "English", "arabic": "العربية", "signOut": "تسجيل الخروج", "signedInAs": "مسجل باسم {{name}}",
+    "thisPhone": "هذا الهاتف", "renamePhone": "إعادة تسمية الهاتف", "users": "الأشخاص", "addUser": "إضافة شخص", "role": "الدور", "owner": "مسؤول", "seller": "بائع",
+    "pendingInvite": "مضاف، لم يسجل الدخول بعد", "deactivate": "تعطيل", "activate": "تفعيل", "inviteHint": "أعطه اسم الدخول والرمز السري ليسجل الدخول من هاتفه.",
+    "invited": "تمت الإضافة. يمكن لـ {{name}} الدخول الآن باسم \"{{slug}}\".", "changePin": "تغيير رمزي السري", "currentPin": "الرمز الحالي", "pinChanged": "تم تغيير الرمز",
+    "export": "تصدير إلى Excel", "exporting": "جارٍ تجهيز الملف…", "exportHint": "ينزّل المبيعات والأصناف والمخزون والحركات في ملف .xlsx واحد.",
+    "about": "حول", "version": "الإصدار", "install": "إضافة إلى الشاشة الرئيسية", "installHint": "مشاركة ← إضافة إلى الشاشة الرئيسية (آيفون) أو ⋮ ← تثبيت التطبيق (أندرويد)",
+    "removeInvite": "إزالة الدعوة", "setPinFor": "تعيين رمز لـ {{name}}", "pinHint": "يستخدم الشخص هذا الرمز المكوّن من 6 أرقام للدخول.", "slugTaken": "اسم الدخول مستخدم مسبقاً"
+  },
+  "errors": {
+    "insufficientStock": "المخزون غير كافٍ لـ {{item}} (بقي {{left}} فقط)", "notInvited": "لم يضف المسؤول هذا الاسم بعد",
+    "badPin": "الرمز السري خاطئ", "notAllowed": "غير مسموح لك بهذا الإجراء", "offline": "لا يوجد اتصال بالإنترنت", "generic": "حدث خطأ: {{message}}",
+    "pinLength": "الرمز يجب أن يكون 6 أرقام", "slugFormat": "اسم الدخول: 2–20 حرفاً أو رقماً لاتينياً بدون مسافات", "required": "هذا الحقل مطلوب"
+  },
+  "categories": {
+    "dishes": "صحون وأوعية", "glass": "زجاجيات", "cookware": "أواني طبخ وأدوات مائدة", "decor": "ديكور", "vases": "مزهريات وأوعية زجاجية",
+    "flowers": "زهور ونباتات صناعية", "textiles": "أقمشة وسجاد", "storage": "تخزين وسلال", "bathroom": "حمام",
+    "cleaning": "تنظيف ومنزلية", "lighting": "إنارة", "accessories": "إكسسوارات شعر", "other": "أخرى"
+  }
+}

@@ -1,0 +1,36 @@
+rows=369 with_photo=365 cartons=580.0 total_qty=30998.0 rmb_total=295,244.70 total_cost_usd=44,000.71 total_price_usd=69,690.73
+
+page 1: row Bassel 2-6 has 2 images (xref 30 and 30); keeping first
+page 2: row Bassel 2-17 has 2 images (xref 42 and 43); keeping first
+page 3: row Bassel 2-29 has 2 images (xref 54 and 55); keeping first
+page 4: row Bassel 3-4 has 2 images (xref 65 and 66); keeping first
+page 6: row Bassel 3-26 has 2 images (xref 86 and 87); keeping first
+page 8: row Bassel 5-5 has 2 images (xref 109 and 99); keeping first
+page 9: row Bassel 6-9 has 2 images (xref 118 and 119); keeping first
+page 9: row Bassel 6-10 has no photo
+page 11: row Bassel 9-1 has 2 images (xref 147 and 148); keeping first
+page 12: row Bassel 9-12 has 2 images (xref 163 and 164); keeping first
+page 12: row Bassel 9-7 unit cost derived from total
+page 12: row Bassel 9-7 unit price derived from total
+page 14: row Bassel 10-24 has no photo
+page 15: row Bassel 10-30 has no photo
+page 16: row Bassel 12-1 has 2 images (xref 224 and 225); keeping first
+page 17: row Bassel 12-2 has 2 images (xref 225 and 228); keeping first
+page 17: row Bassel 12-10 has 2 images (xref 236 and 237); keeping first
+page 17: row Bassel 12-12 has 2 images (xref 239 and 240); keeping first
+page 18: row Bassel 13-1 has 2 images (xref 253 and 254); keeping first
+page 22: row Bassel 18-1 has 2 images (xref 302 and 303); keeping first
+page 23: row Bassel 18-2 has 2 images (xref 303 and 302); keeping first
+page 24: row Bassel 23-3 has 2 images (xref 320 and 321); keeping first
+page 25: row Bassel 25-2 has no photo
+page 26: row Bassel 25-4 has 2 images (xref 335 and 332); keeping first
+page 27: row Bassel 25-15 has 2 images (xref 349 and 343); keeping first
+page 28: row Bassel 29-2 has 2 images (xref 363 and 362); keeping first
+page 29: row Bassel 29-3 has 2 images (xref 362 and 363); keeping first
+page 30: row Bassel 32-4 has 2 images (xref 385 and 384); keeping first
+page 31: row Bassel 35-1 has 2 images (xref 395 and 396); keeping first
+page 31: row Bassel 34-2b named after previous row (no sheet ref)
+page 31: row Bassel 34-3b named after previous row (no sheet ref)
+page 34: row Bassel 38-3 has 2 images (xref 431 and 432); keeping first
+page 18: duplicate ref Bassel 12-1 renamed to Bassel 12-1 (2)
+page 18: duplicate ref Bassel 12-2 renamed to Bassel 12-2 (2)
