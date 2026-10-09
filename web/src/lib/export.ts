@@ -21,6 +21,19 @@ export async function exportWorkbook(locale: string) {
     it ? ((ar ? it.description_ar : it.description_en) || it.description_en || it.description_ar || it.item_no || it.sheet_ref) : "";
   const dt = (iso: string) => new Date(iso);
 
+  const CANCELLED = ar ? "ملغاة" : "CANCELLED";
+  /** Paint cancelled rows light red with dark-red text so they can't be mistaken for real sales. */
+  const markCancelled = (ws: import("exceljs").Worksheet, flags: boolean[]) => {
+    flags.forEach((v, i) => {
+      if (!v) return;
+      const row = ws.getRow(i + 2);
+      row.eachCell({ includeEmpty: true }, (c) => {
+        c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFDE2E2" } };
+        c.font = { color: { argb: "FFB91C1C" } };
+      });
+    });
+  };
+
   const wb = new ExcelJS.Workbook();
   wb.creator = "Container Sales";
   const money = "$#,##0.00";
@@ -36,16 +49,17 @@ export async function exportWorkbook(locale: string) {
     { header: ar ? "المجموع" : "Total", key: "total", width: 12, style: { numFmt: money } },
     { header: ar ? "المدفوع" : "Paid", key: "paid", width: 12, style: { numFmt: money } },
     { header: ar ? "الحالة" : "Status", key: "status", width: 10 },
-    { header: ar ? "ملغى" : "Voided", key: "voided", width: 8 },
-    { header: ar ? "سبب الإلغاء" : "Void reason", key: "reason", width: 24 },
+    { header: ar ? "ملغاة" : "Cancelled", key: "voided", width: 11 },
+    { header: ar ? "سبب الإلغاء" : "Cancel reason", key: "reason", width: 24 },
     { header: ar ? "ملاحظة" : "Note", key: "note", width: 24 },
   ];
   for (const s of sales.data ?? [])
     s1.addRow({
       no: s.sale_no, date: dt(s.sold_at), seller: who.get(s.seller_id) ?? "", device: s.device_id ? dev.get(s.device_id) ?? "" : "",
       customer: s.customer_name ?? "", location: s.location ?? "", total: Number(s.total_usd), paid: Number(s.paid_usd),
-      status: s.payment_status, voided: s.voided ? "yes" : "", reason: s.void_reason ?? "", note: s.note ?? "",
+      status: s.payment_status, voided: s.voided ? CANCELLED : "", reason: s.void_reason ?? "", note: s.note ?? "",
     });
+  markCancelled(s1, (sales.data ?? []).map((s) => s.voided));
 
   const s2 = wb.addWorksheet(ar ? "الأصناف المباعة" : "Sale lines", { views: [{ rightToLeft: ar }] });
   s2.columns = [
@@ -59,17 +73,20 @@ export async function exportWorkbook(locale: string) {
     { header: ar ? "تكلفة القطعة" : "Unit cost", key: "cost", width: 12, style: { numFmt: money } },
     { header: ar ? "المجموع" : "Line total", key: "total", width: 12, style: { numFmt: money } },
     { header: ar ? "الربح" : "Profit", key: "profit", width: 12, style: { numFmt: money } },
-    { header: ar ? "ملغى" : "Voided", key: "voided", width: 8 },
+    { header: ar ? "ملغاة" : "Cancelled", key: "voided", width: 11 },
   ];
+  const lineVoided: boolean[] = [];
   for (const l of lines.data ?? []) {
     const it = l.items as { sheet_ref: string; item_no: string | null; description_en: string | null; description_ar: string | null } | null;
     const sale = l.sales as { sale_no: number; sold_at: string; voided: boolean } | null;
     s2.addRow({
       no: sale?.sale_no, date: sale ? dt(sale.sold_at) : null, ref: it?.sheet_ref ?? "", code: it?.item_no ?? "", item: name(it),
       qty: l.qty, price: Number(l.unit_price_usd), cost: Number(l.unit_cost_usd), total: Number(l.line_total),
-      profit: l.qty * (Number(l.unit_price_usd) - Number(l.unit_cost_usd)), voided: sale?.voided ? "yes" : "",
+      profit: l.qty * (Number(l.unit_price_usd) - Number(l.unit_cost_usd)), voided: sale?.voided ? CANCELLED : "",
     });
+    lineVoided.push(Boolean(sale?.voided));
   }
+  markCancelled(s2, lineVoided);
 
   const s3 = wb.addWorksheet(ar ? "المخزون" : "Stock", { views: [{ rightToLeft: ar }] });
   s3.columns = [
