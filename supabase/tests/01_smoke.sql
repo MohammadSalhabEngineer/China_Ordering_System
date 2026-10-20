@@ -95,3 +95,17 @@ select count(*) as profiles_left from public.profiles;
 set role postgres;
 select count(*) as auth_users_left from auth.users;
 reset role;
+
+\echo '--- 0003: landed cost sums to exactly 70000; phone + settings'
+set role postgres;
+\set ON_ERROR_STOP on
+insert into public.items (sheet_ref, cost_usd, default_price_usd, initial_qty) values ('Bassel 9-9', 3.333, 9, 7);
+\i supabase/migrations/0003_receipts_and_landed_cost.sql
+select round(sum(initial_qty * landed_cost_usd), 4) as landed_total_should_be_70000 from public.items where active;
+set role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
+select public.set_my_phone(' +961 3 000 000 ');
+select phone from public.profiles where id = '11111111-1111-1111-1111-111111111111';
+update public.app_settings set value = 'Salhab Home' where key = 'shop_name';
+select value as shop_name from public.app_settings;
+reset role;

@@ -60,6 +60,7 @@ Then **Settings → Add a person** for each family member: name, login name, rol
 - **Sell**: tap photos, set quantity and price, add customer and place, mark paid / partial / unpaid, Save.
 - **Stock**: what is left of everything. Owner can adjust stock (returns, damaged, recount) and edit names/prices.
 - **History**: every sale with who sold it, from which phone, when. Owner can cancel a sale (stock goes back). A seller can cancel their own sale within 24 hours.
+- **Receipt for the buyer**: open the sale → **Share receipt** → pick English or Arabic → Copy text (paste into WhatsApp), Share image (phone share sheet), or Download PDF. Put your phone number in Settings so it appears on your receipts; the owner sets the shop name there too.
 - **Dashboard**: revenue, profit, units, money owed, per seller, best sellers.
 - **Settings**: Arabic/English, rename this phone, people management (owner), Excel export (owner).
 
@@ -70,5 +71,6 @@ Then **Settings → Add a person** for each family member: name, login name, rol
 - **Which phone**: the app records a nickname per phone plus what the browser reports. iPhones only report "iPhone" (Apple hides the model from websites); Android phones usually report the exact model. The reliable "who" is the login.
 - **Backups**: Settings → Export to Excel downloads everything. Do it weekly.
 - The big supplier catalog PDF is not part of the app; only the order sheet was imported.
-- Cost basis: the sheet's blue column ("+ MARKUP", the landed cost including shipping, totalling $70,000). The green column is the selling price. Profit = selling price − landed cost. The plain "USD price / pc" (goods only) is kept for reference.
+- Cost basis: landed cost = goods cost × (70,000 ÷ total goods cost), so the whole container (goods + shipping + everything) is spread over the items in proportion to their goods cost and sums to exactly $70,000. Selling price = the sheet's green column. Profit = selling price − landed cost. (Earlier the blue column was used directly; it missed a hidden row.)
+- Old note: the sheet's blue column ("+ MARKUP", the landed cost including shipping, totalling $70,000). The green column is the selling price. Profit = selling price − landed cost. The plain "USD price / pc" (goods only) is kept for reference.
 - Database changes after the first setup live in `supabase/migrations/0002_*.sql` and later; paste each new file into the SQL editor once.

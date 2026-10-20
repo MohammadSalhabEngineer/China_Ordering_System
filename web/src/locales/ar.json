@@ -242,7 +242,12 @@
     "slugTaken": "اسم الدخول مستخدم مسبقاً",
     "deleteUser": "حذف",
     "deleteConfirm": "حذف {{name}} نهائياً؟ يصبح اسم الدخول متاحاً من جديد.",
-    "deleted": "تم الحذف"
+    "deleted": "تم الحذف",
+    "shopName": "اسم المحل على الفواتير",
+    "shopNameHint": "يظهر في أعلى كل فاتورة.",
+    "myPhone": "رقم هاتفي (يظهر على فواتيري)",
+    "myPhoneHint": "يرى الزبائن هذا الرقم على الفواتير التي تصدرها.",
+    "receipts": "الفواتير"
   },
   "errors": {
     "insufficientStock": "المخزون غير كافٍ لـ {{item}} (بقي {{left}} فقط)",
@@ -271,5 +276,14 @@
     "lighting": "إنارة",
     "accessories": "إكسسوارات شعر",
     "other": "أخرى"
+  },
+  "receipt": {
+    "share": "مشاركة الفاتورة",
+    "copy": "نسخ النص",
+    "copied": "تم النسخ",
+    "shareImage": "مشاركة كصورة",
+    "downloadPdf": "تنزيل PDF",
+    "language": "لغة الفاتورة",
+    "preparing": "جارٍ التجهيز…"
   }
 }

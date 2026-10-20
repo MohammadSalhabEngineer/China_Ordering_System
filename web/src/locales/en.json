@@ -242,7 +242,12 @@
     "slugTaken": "That login name is already used",
     "deleteUser": "Delete",
     "deleteConfirm": "Delete {{name}} permanently? Their login name becomes free again.",
-    "deleted": "Deleted"
+    "deleted": "Deleted",
+    "shopName": "Shop name on receipts",
+    "shopNameHint": "Shown at the top of every receipt.",
+    "myPhone": "My phone (shown on my receipts)",
+    "myPhoneHint": "Customers see this number on receipts you issue.",
+    "receipts": "Receipts"
   },
   "errors": {
     "insufficientStock": "Not enough stock for {{item}} (only {{left}} left)",
@@ -271,5 +276,14 @@
     "lighting": "Lighting",
     "accessories": "Hair accessories",
     "other": "Other"
+  },
+  "receipt": {
+    "share": "Share receipt",
+    "copy": "Copy text",
+    "copied": "Copied",
+    "shareImage": "Share image",
+    "downloadPdf": "Download PDF",
+    "language": "Receipt language",
+    "preparing": "Preparing…"
   }
 }

@@ -22,7 +22,7 @@ interface Invite {
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
-  const { profile, isOwner, deviceNickname, registerDevice, signOut } = useAuth();
+  const { profile, isOwner, deviceNickname, registerDevice, signOut, refreshProfile } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
   const [renaming, setRenaming] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -170,6 +170,8 @@ export default function SettingsPage() {
           </section>
         )}
 
+        <ReceiptSettings isOwner={isOwner} phone={profile?.phone ?? ""} onSaved={(msg) => { setToast(msg); void refreshProfile(); }} />
+
         {isOwner && (
           <section className="card p-4">
             <p className="font-semibold mb-1">{t("settings.export")}</p>
@@ -207,6 +209,62 @@ export default function SettingsPage() {
       <ChangePinSheet open={changingPin} onClose={() => setChangingPin(false)} onDone={() => { setChangingPin(false); setToast(t("settings.pinChanged")); }} />
       <Toast message={toast} onDone={() => setToast(null)} />
     </>
+  );
+}
+
+/** Shop name (owner) and the signed-in person's phone, both printed on receipts. */
+function ReceiptSettings({ isOwner, phone, onSaved }: { isOwner: boolean; phone: string; onSaved: (msg: string) => void }) {
+  const { t } = useTranslation();
+  const shop = useAsync(async () => {
+    const { data } = await supabase.from("app_settings").select("value").eq("key", "shop_name").maybeSingle();
+    return (data?.value as string | null) ?? "";
+  }, []);
+  const [shopName, setShopName] = useState<string | null>(null);
+  const [myPhone, setMyPhone] = useState(phone);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const shopValue = shopName ?? shop.data ?? "";
+
+  async function save(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      if (isOwner && shopName !== null) {
+        const { error } = await supabase.from("app_settings").upsert({ key: "shop_name", value: shopName.trim(), updated_at: new Date().toISOString() });
+        if (error) throw new Error(error.message);
+      }
+      if (myPhone !== phone) {
+        const { error } = await supabase.rpc("set_my_phone", { p_phone: myPhone });
+        if (error) throw new Error(error.message);
+      }
+      onSaved(t("common.save"));
+    } catch (err) {
+      const ex = explainError(err);
+      setError(t(ex.key, ex.args));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="card p-4">
+      <p className="font-semibold mb-3">{t("settings.receipts")}</p>
+      <form onSubmit={save}>
+        {isOwner && (
+          <Field label={t("settings.shopName")} hint={t("settings.shopNameHint")}>
+            <input className="input" value={shopValue} onChange={(e) => setShopName(e.target.value)} />
+          </Field>
+        )}
+        <Field label={t("settings.myPhone")} hint={t("settings.myPhoneHint")}>
+          <input className="input" dir="ltr" type="tel" inputMode="tel" value={myPhone} onChange={(e) => setMyPhone(e.target.value)} placeholder="+961 3 000 000" />
+        </Field>
+        {error && <p className="text-bad text-sm mb-3">{error}</p>}
+        <button className="btn-secondary w-full" disabled={busy}>
+          {busy ? <Spinner /> : t("common.save")}
+        </button>
+      </form>
+    </section>
   );
 }
 

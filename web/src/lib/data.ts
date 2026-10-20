@@ -61,7 +61,7 @@ export async function fetchMovements(itemId: string): Promise<StockMovement[]> {
 }
 
 export const SALE_SELECT =
-  "*, sale_lines(*, items(sheet_ref, item_no, description_en, description_ar, photo_path)), profiles:seller_id(display_name, display_name_ar), devices:device_id(nickname, device_label)";
+  "*, sale_lines(*, items(sheet_ref, item_no, description_en, description_ar, photo_path)), profiles:seller_id(display_name, display_name_ar, phone), devices:device_id(nickname, device_label)";
 
 export type VoidedFilter = "no" | "yes" | "all";
 
@@ -114,4 +114,9 @@ export function shortRef(ref: string): string {
 export function personName(p: { display_name: string; display_name_ar: string | null } | null | undefined, locale: string): string {
   if (!p) return "?";
   return (locale === "ar" && p.display_name_ar) || p.display_name;
+}
+
+export async function fetchShopName(): Promise<string> {
+  const { data } = await supabase.from("app_settings").select("value").eq("key", "shop_name").maybeSingle();
+  return (data?.value as string | null) ?? "";
 }

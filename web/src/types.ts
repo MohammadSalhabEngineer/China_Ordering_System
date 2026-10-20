@@ -7,6 +7,7 @@ export interface Profile {
   display_name_ar: string | null;
   role: Role;
   active: boolean;
+  phone: string | null;
   created_at: string;
 }
 
@@ -83,7 +84,7 @@ export interface SaleLine {
 
 export interface SaleWithLines extends Sale {
   sale_lines: (SaleLine & { items: Pick<Item, "sheet_ref" | "item_no" | "description_en" | "description_ar" | "photo_path"> })[];
-  profiles: Pick<Profile, "display_name" | "display_name_ar"> | null;
+  profiles: Pick<Profile, "display_name" | "display_name_ar" | "phone"> | null;
   devices: Pick<Device, "nickname" | "device_label"> | null;
 }
 

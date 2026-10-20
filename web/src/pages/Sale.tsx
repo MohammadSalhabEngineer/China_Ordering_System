@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Ban, BadgeDollarSign, Smartphone, User, MapPin } from "lucide-react";
-import { fetchSale, useAsync, personName, itemName, shortRef } from "../lib/data";
+import { Ban, BadgeDollarSign, Smartphone, User, MapPin, Share2 } from "lucide-react";
+import { fetchSale, fetchShopName, useAsync, personName, itemName, shortRef } from "../lib/data";
+import { ReceiptSheet } from "../components/ReceiptSheet";
 import { supabase, explainError } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { Header } from "../components/Header";
@@ -22,8 +23,10 @@ export default function SalePage() {
       .order("paid_at");
     return (data ?? []) as unknown as { id: string; amount_usd: number; paid_at: string; note: string | null; profiles: { display_name: string; display_name_ar: string | null } | null }[];
   }, [id]);
+  const shop = useAsync(fetchShopName, []);
   const [voiding, setVoiding] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   if (sale.loading && !sale.data) return <Loading />;
@@ -110,6 +113,11 @@ export default function SalePage() {
           </div>
         )}
 
+        {!s.voided && (
+          <button className="btn-primary w-full" onClick={() => setSharing(true)}>
+            <Share2 size={18} /> {t("receipt.share")}
+          </button>
+        )}
         {canVoid && (
           <button className="btn-secondary w-full text-bad" onClick={() => setVoiding(true)}>
             <Ban size={18} /> {t("history.void")}
@@ -119,6 +127,7 @@ export default function SalePage() {
 
       <VoidSheet open={voiding} saleId={s.id} deviceId={deviceId} onClose={() => setVoiding(false)} onDone={() => { setVoiding(false); setToast(t("history.voided")); refresh(); }} />
       <PaySheet open={paying} saleId={s.id} due={due} deviceId={deviceId} onClose={() => setPaying(false)} onDone={() => { setPaying(false); refresh(); }} />
+      {sharing && <ReceiptSheet open sale={s} shopName={shop.data ?? ""} onClose={() => setSharing(false)} onToast={setToast} />}
       <Toast message={toast} onDone={() => setToast(null)} />
     </>
   );

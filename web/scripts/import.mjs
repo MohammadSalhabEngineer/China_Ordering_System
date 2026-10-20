@@ -29,6 +29,13 @@ const rows = JSON.parse(await readFile(path.join(dataDir, "items.json"), "utf8")
 const tr = JSON.parse(await readFile(path.join(dataDir, "translations.json"), "utf8"));
 const skipPhotos = process.argv.includes("--no-photos");
 
+// Landed cost = goods cost spread so the whole container costs CONTAINER_TOTAL_USD
+// (manufacturing + shipping + everything), proportional to each item's goods cost.
+const CONTAINER_TOTAL_USD = Number(process.env.CONTAINER_TOTAL_USD ?? 70000);
+const goodsTotal = rows.reduce((s, r) => s + (r.total_qty ?? 0) * (r.cost_usd ?? 0), 0);
+const landedFactor = goodsTotal ? CONTAINER_TOTAL_USD / goodsTotal : 1;
+console.log(`goods total $${goodsTotal.toFixed(2)} -> landed factor ${landedFactor.toFixed(5)} (container $${CONTAINER_TOTAL_USD})`);
+
 let uploaded = 0, inserted = 0, updated = 0, initialised = 0;
 for (const r of rows) {
   const t = tr[r.ref] ?? {};
@@ -58,7 +65,7 @@ for (const r of rows) {
     cartons: r.cartons,
     qty_per_carton: r.qty_per_carton,
     cost_usd: r.cost_usd ?? 0,                 // goods only
-    landed_cost_usd: r.landed_cost_usd ?? null, // blue column, incl. shipping — profit uses this
+    landed_cost_usd: r.cost_usd == null ? null : Math.round(r.cost_usd * landedFactor * 10000) / 10000, // incl. shipping — profit uses this
     default_price_usd: r.sell_price_usd ?? 0,   // green column
     rmb_price: r.rmb_price,
     cbm: r.cbm,
