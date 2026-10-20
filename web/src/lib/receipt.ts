@@ -74,11 +74,17 @@ export async function copyText(text: string): Promise<void> {
 
 /** Renders the preview element to a PNG data URL (2x for crisp text). */
 export async function nodeToPng(el: HTMLElement): Promise<{ dataUrl: string; width: number; height: number }> {
-  const opts = { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true };
+  // Explicit size rounded UP so a fractional-height box never loses its last pixel row,
+  // and margin 0 because html-to-image copies a resolved `margin: auto` onto the clone,
+  // which would shift the receipt sideways inside the capture on wide screens.
+  const r = el.getBoundingClientRect();
+  const width = Math.ceil(r.width);
+  const height = Math.ceil(r.height);
+  const opts = { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true, width, height, style: { margin: "0" } };
   // Safari sometimes returns a blank first render; a second pass is reliable.
   await toPng(el, opts);
   const dataUrl = await toPng(el, opts);
-  return { dataUrl, width: el.offsetWidth, height: el.offsetHeight };
+  return { dataUrl, width, height };
 }
 
 function dataUrlToBlob(dataUrl: string): Blob {
@@ -119,8 +125,16 @@ export async function sharePng(dataUrl: string, filename: string, title: string)
 export async function downloadPdf(dataUrl: string, width: number, height: number, filename: string): Promise<void> {
   const { jsPDF } = await import("jspdf");
   const pageW = 148; // A5 width in mm
-  const pageH = Math.max(100, (height / width) * pageW);
-  const pdf = new jsPDF({ unit: "mm", format: [pageW, pageH], orientation: "portrait" });
-  pdf.addImage(dataUrl, "PNG", 0, 0, pageW, (height / width) * pageW);
+  const margin = 8;
+  const imgW = pageW - 2 * margin;
+  const imgH = (height / width) * imgW;
+  // Never shorter than A5: jsPDF rotates a page whose height < width to portrait,
+  // which cropped short (one-line) receipts on the right.
+  const pageH = Math.max(210, imgH + 2 * margin);
+  // jsPDF caps a page side at 14400 pt (5080 mm); scale everything down for absurdly long receipts
+  const MAX_PAGE_MM = (14400 / 72) * 25.4;
+  const k = Math.min(1, MAX_PAGE_MM / pageH);
+  const pdf = new jsPDF({ unit: "mm", format: [pageW * k, pageH * k], orientation: "portrait" });
+  pdf.addImage(dataUrl, "PNG", margin * k, margin * k, imgW * k, imgH * k);
   pdf.save(filename);
 }

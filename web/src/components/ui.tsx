@@ -63,7 +63,7 @@ export function Sheet({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose} role="dialog" aria-modal>
       <div
-        className={`w-full max-w-lg rounded-t-3xl bg-paper shadow-2xl ${tall ? "h-[92dvh]" : "max-h-[92dvh]"} flex flex-col`}
+        className={`relative w-full max-w-lg rounded-t-3xl bg-paper shadow-2xl ${tall ? "h-[92dvh]" : "max-h-[92dvh]"} flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-4 pt-3 pb-2 shrink-0">

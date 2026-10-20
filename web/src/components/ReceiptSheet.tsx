@@ -79,12 +79,15 @@ export function ReceiptSheet({
 
       {/* The preview is what gets turned into the image / PDF, so it uses plain inline sizes. */}
       <div className="overflow-x-auto -mx-4 px-4 pb-2">
+        {/* centering lives on this wrapper, not on the captured node: html-to-image would copy
+            a resolved auto margin onto the clone and shift the receipt out of the capture */}
+        <div className="w-fit mx-auto">
         <div
           ref={ref}
           dir={lang === "ar" ? "rtl" : "ltr"}
           lang={lang}
           style={{ width: 380, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif" }}
-          className="mx-auto bg-white text-ink rounded-xl border border-line p-5 text-[13px] leading-snug"
+          className="bg-white text-ink rounded-xl border border-line p-5 text-[13px] leading-snug [overflow-wrap:anywhere]"
         >
           <div className="text-center mb-3">
             {shopName && <p className="text-lg font-bold">{shopName}</p>}
@@ -134,8 +137,8 @@ export function ReceiptSheet({
                   <td className="py-1.5 pe-2">
                     <div>{lineName(l, lang)}</div>
                     {l.items.item_no && (
-                      <div className="text-[10px] text-muted" dir="ltr">
-                        {l.items.item_no}
+                      <div className="text-[10px] text-muted">
+                        <span dir="ltr">{l.items.item_no}</span>
                       </div>
                     )}
                   </td>
@@ -170,6 +173,7 @@ export function ReceiptSheet({
           )}
           <p className="mt-4 text-center text-xs text-muted">{L.thanks}</p>
           <p className="text-center text-[10px] text-muted">{L.currency}</p>
+        </div>
         </div>
       </div>
 
