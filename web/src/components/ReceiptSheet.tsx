@@ -78,16 +78,17 @@ export function ReceiptSheet({
       </div>
 
       {/* The preview is what gets turned into the image / PDF, so it uses plain inline sizes. */}
-      <div className="overflow-x-auto -mx-4 px-4 pb-2">
-        {/* centering lives on this wrapper, not on the captured node: html-to-image would copy
-            a resolved auto margin onto the clone and shift the receipt out of the capture */}
-        <div className="w-fit mx-auto">
+      <div className="pb-2">
+        {/* The receipt fits the screen (max 380px) so the preview is never wider than the phone.
+            Centering lives on this wrapper, not on the captured node: html-to-image would copy
+            a resolved auto margin onto the clone and shift the receipt out of the capture. */}
+        <div className="w-fit mx-auto max-w-full">
         <div
           ref={ref}
           dir={lang === "ar" ? "rtl" : "ltr"}
           lang={lang}
-          style={{ width: 380, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif" }}
-          className="bg-white text-ink rounded-xl border border-line p-5 text-[13px] leading-snug [overflow-wrap:anywhere]"
+          style={{ width: "min(380px, calc(100vw - 2rem))", fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', sans-serif" }}
+          className="bg-white text-ink rounded-xl border border-line p-5 text-[13px] leading-snug [overflow-wrap:anywhere] overflow-hidden"
         >
           <div className="text-center mb-3">
             {shopName && <p className="text-lg font-bold">{shopName}</p>}

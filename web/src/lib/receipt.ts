@@ -77,6 +77,7 @@ export async function nodeToPng(el: HTMLElement): Promise<{ dataUrl: string; wid
   // Explicit size rounded UP so a fractional-height box never loses its last pixel row,
   // and margin 0 because html-to-image copies a resolved `margin: auto` onto the clone,
   // which would shift the receipt sideways inside the capture on wide screens.
+  await document.fonts.ready; // measure only once fonts are final, so the clone can't reflow taller
   const r = el.getBoundingClientRect();
   const width = Math.ceil(r.width);
   const height = Math.ceil(r.height);
