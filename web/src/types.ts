@@ -32,6 +32,8 @@ export interface Item {
   qty_per_carton: number | null;
   initial_qty: number;
   stock_qty: number;
+  /** pieces ordered but never received (migration 0004); absent on older databases */
+  missing_qty?: number;
   cost_usd: number;
   landed_cost_usd: number | null;
   default_price_usd: number;

@@ -94,7 +94,8 @@ export async function exportWorkbook(locale: string) {
     { header: ar ? "الرمز" : "Code", key: "code", width: 12 },
     { header: ar ? "الصنف" : "Item", key: "item", width: 36 },
     { header: ar ? "الفئة" : "Category", key: "cat", width: 12 },
-    { header: ar ? "الكمية الأولية" : "Initial", key: "initial", width: 10 },
+    { header: ar ? "الكمية المطلوبة" : "Ordered", key: "initial", width: 10 },
+    { header: ar ? "لم يصل" : "Not arrived", key: "missing", width: 11 },
     { header: ar ? "المتبقي" : "In stock", key: "stock", width: 10 },
     { header: ar ? "التكلفة" : "Cost", key: "cost", width: 10, style: { numFmt: money } },
     { header: ar ? "التكلفة مع الشحن" : "Landed cost", key: "landed", width: 12, style: { numFmt: money } },
@@ -102,12 +103,19 @@ export async function exportWorkbook(locale: string) {
     { header: ar ? "قيمة المخزون" : "Stock value", key: "value", width: 12, style: { numFmt: money } },
     { header: ar ? "ملاحظة" : "Note", key: "note", width: 30 },
   ];
-  for (const it of items.data ?? [])
+  const itemMissing: boolean[] = [];
+  for (const it of items.data ?? []) {
+    const missing = Number(it.missing_qty ?? 0);
     s3.addRow({
-      ref: it.sheet_ref, code: it.item_no ?? "", item: name(it), cat: it.category ?? "", initial: it.initial_qty, stock: it.stock_qty,
+      ref: it.sheet_ref, code: it.item_no ?? "", item: name(it), cat: it.category ?? "", initial: it.initial_qty,
+      missing: missing || "", stock: it.stock_qty,
       cost: Number(it.cost_usd), landed: it.landed_cost_usd == null ? null : Number(it.landed_cost_usd), price: Number(it.default_price_usd),
-      value: it.stock_qty * Number(it.landed_cost_usd ?? it.cost_usd), note: it.needs_review ?? "",
+      value: it.stock_qty * Number(it.landed_cost_usd ?? it.cost_usd),
+      note: [missing ? (ar ? "لم يصل" : "NOT ARRIVED") : "", it.needs_review ?? ""].filter(Boolean).join(" · "),
     });
+    itemMissing.push(missing > 0);
+  }
+  markCancelled(s3, itemMissing); // same red highlight as cancelled sales
 
   const s4 = wb.addWorksheet(ar ? "الحركات" : "Movements", { views: [{ rightToLeft: ar }] });
   s4.columns = [

@@ -16,3 +16,7 @@ data/photos/
 .DS_Store
 Thumbs.db
 __pycache__/
+
+# generated reports (contain costs/prices; keep them off the public repo)
+bassel china_updated.pdf
+bassel china_missing_items*.pdf

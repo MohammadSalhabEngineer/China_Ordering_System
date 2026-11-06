@@ -77,7 +77,11 @@ for (const r of rows) {
   const { data: existing } = await sb.from("items").select("id").eq("sheet_ref", r.ref).maybeSingle();
   let id;
   if (existing) {
-    const { error } = await sb.from("items").update(item).eq("id", existing.id);
+    // never overwrite costs on an existing item: they may have been corrected later
+    // (migration 0004 removed the not-received goods from the $70,000 and rescaled the rest)
+    // eslint-disable-next-line no-unused-vars
+    const { landed_cost_usd, ...changes } = item;
+    const { error } = await sb.from("items").update(changes).eq("id", existing.id);
     if (error) throw new Error(`${r.ref}: ${error.message}`);
     id = existing.id;
     updated++;

@@ -92,10 +92,12 @@ export function Photo({ path, alt, className = "" }: { path: string | null | und
   return <img src={src} alt={alt} loading="lazy" className={`object-cover bg-line/40 ${className}`} onError={() => setBroken(true)} />;
 }
 
-export function StockBadge({ stock, initial }: { stock: number; initial: number }) {
+export function StockBadge({ stock, initial, missing = 0 }: { stock: number; initial: number; missing?: number }) {
   const { t } = useTranslation();
+  if (initial > 0 && missing >= initial) return <span className="badge bg-bad text-white">{t("stock.notArrived")}</span>;
   if (stock <= 0) return <span className="badge bg-bad text-white">{t("sell.outOfStock")}</span>;
-  const low = initial > 0 && stock <= Math.max(2, Math.ceil(initial * 0.2));
+  const received = Math.max(0, initial - missing);
+  const low = received > 0 && stock <= Math.max(2, Math.ceil(received * 0.2));
   return (
     <span className={`badge ${low ? "bg-amber-100 text-warn" : "bg-brand-soft text-brand-dark"}`}>
       {stock}

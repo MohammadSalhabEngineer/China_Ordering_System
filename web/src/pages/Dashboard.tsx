@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { fetchItems, fetchSales, useAsync, personName, itemName, shortRef } from "../lib/data";
+import { fetchItems, fetchSales, useAsync, personName, itemName, shortRef, isLowStock, isSoldOut, missingQty, receivedQty } from "../lib/data";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { Header } from "../components/Header";
@@ -80,10 +80,14 @@ export default function DashboardPage() {
   }, [live]);
 
   const stockValue = (items.data ?? []).reduce((s, i) => s + i.stock_qty * Number(i.landed_cost_usd ?? i.cost_usd), 0);
-  // sales target = everything in the container sold at its list price
-  const targetUsd = (items.data ?? []).reduce((s, i) => s + i.initial_qty * Number(i.default_price_usd), 0);
-  const lowItems = (items.data ?? []).filter((i) => i.stock_qty > 0 && i.stock_qty <= Math.max(2, Math.ceil(i.initial_qty * 0.2))).length;
-  const outItems = (items.data ?? []).filter((i) => i.stock_qty <= 0).length;
+  // sales target = everything that actually arrived, sold at its list price
+  const targetUsd = (items.data ?? []).reduce((s, i) => s + receivedQty(i) * Number(i.default_price_usd), 0);
+  const lowItems = (items.data ?? []).filter(isLowStock).length;
+  const outItems = (items.data ?? []).filter(isSoldOut).length;
+  // ordered but never received: kept out of cost, stock value and target, shown on its own
+  const missingItems = (items.data ?? []).filter((i) => missingQty(i) > 0);
+  const missingPcs = missingItems.reduce((s, i) => s + missingQty(i), 0);
+  const missingValue = missingItems.reduce((s, i) => s + missingQty(i) * Number(i.landed_cost_usd ?? i.cost_usd), 0);
   const owed = (receivables.data ?? []).filter((r) => isOwner || r.seller_id === profile?.id);
   const owedTotal = owed.reduce((s, r) => s + Number(r.due_usd), 0);
 
@@ -102,6 +106,13 @@ export default function DashboardPage() {
           <Tile label={t("dashboard.receivables")} value={money(owedTotal)} tone={owedTotal > 0 ? "warn" : undefined} sub={owed.length ? `${owed.length}` : undefined} />
           {isOwner && <Tile label={t("dashboard.stockValue")} value={money(stockValue)} />}
           {isOwner && <Tile label={t("dashboard.lowStockItems")} value={int(lowItems)} sub={`${t("dashboard.soldOut")}: ${int(outItems)}`} tone={lowItems ? "warn" : undefined} />}
+          {isOwner && missingItems.length > 0 && (
+            <Link to="/stock?filter=missing" className="col-span-2 rounded-2xl border border-bad/30 p-3 text-bad" style={{ background: "linear-gradient(90deg, #fee2e2, #fff5f5)" }}>
+              <p className="text-xs font-medium">{t("dashboard.notArrived")}</p>
+              <p className="text-xl font-bold mt-0.5">{money(missingValue)}</p>
+              <p className="text-xs mt-0.5">{t("dashboard.notArrivedSub", { items: missingItems.length, pcs: int(missingPcs) })}</p>
+            </Link>
+          )}
         </div>
 
         <section className="card p-4">

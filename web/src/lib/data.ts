@@ -89,6 +89,21 @@ export async function fetchCustomers(): Promise<Customer[]> {
   return unwrap(await supabase.from("customers").select("id, name, phone, location").order("name"));
 }
 
+type QtyFields = Pick<Item, "initial_qty" | "stock_qty" | "missing_qty">;
+/** Pieces ordered but never received. */
+export const missingQty = (it: QtyFields) => Number(it.missing_qty ?? 0);
+/** Pieces that actually arrived. */
+export const receivedQty = (it: QtyFields) => Math.max(0, it.initial_qty - missingQty(it));
+/** The whole item never arrived. */
+export const isNotArrived = (it: QtyFields) => it.initial_qty > 0 && missingQty(it) >= it.initial_qty;
+/** Few left, relative to what arrived. */
+export const isLowStock = (it: QtyFields) => {
+  const r = receivedQty(it);
+  return it.stock_qty > 0 && r > 0 && it.stock_qty <= Math.max(2, Math.ceil(r * 0.2));
+};
+/** Sold out (as opposed to never arrived). */
+export const isSoldOut = (it: QtyFields) => it.stock_qty <= 0 && !isNotArrived(it);
+
 /** Sort items by their sheet reference ("Bassel 2-10" after "Bassel 2-9"). */
 export function refSortKey(ref: string): [number, number, string] {
   const m = /(\d+)-(\d+)(.*)$/.exec(ref);

@@ -131,7 +131,8 @@
       "damaged": "تالف",
       "sale": "بيع",
       "void": "إلغاء بيع",
-      "initial": "المخزون الافتتاحي"
+      "initial": "المخزون الافتتاحي",
+      "not_received": "لم يصل"
     },
     "needsReview": "ملاحظة من الاستيراد: {{note}}",
     "editItem": "تعديل الصنف",
@@ -147,7 +148,11 @@
     "choosePhoto": "اختيار من المعرض",
     "removePhoto": "إزالة الصورة",
     "uploading": "جارٍ الرفع…",
-    "goodsCost": "تكلفة البضاعة (بدون شحن)"
+    "goodsCost": "تكلفة البضاعة (بدون شحن)",
+    "filterMissing": "لم يصل",
+    "notArrived": "لم يصل",
+    "notArrivedBanner": "لم تصل {{count}} من أصل {{total}} قطعة. غير محسوبة في التكلفة ولا في قيمة المخزون ولا في هدف المبيعات.",
+    "received": "المستلم"
   },
   "history": {
     "title": "السجل",
@@ -205,7 +210,9 @@
     "margin": "هامش",
     "soldOut": "نفد",
     "lowStockItems": "أصناف قليلة",
-    "sellerOnlyHint": "ترى أرقامك فقط. المسؤول يرى الجميع."
+    "sellerOnlyHint": "ترى أرقامك فقط. المسؤول يرى الجميع.",
+    "notArrived": "لم يصل (مطالبة المورّد)",
+    "notArrivedSub": "{{items}} صنف · {{pcs}} قطعة · غير محسوبة في التكلفة"
   },
   "settings": {
     "title": "الإعدادات",

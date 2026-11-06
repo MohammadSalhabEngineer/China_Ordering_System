@@ -131,7 +131,8 @@
       "damaged": "Damaged",
       "sale": "Sale",
       "void": "Sale cancelled",
-      "initial": "Opening stock"
+      "initial": "Opening stock",
+      "not_received": "Never arrived"
     },
     "needsReview": "Imported with a note: {{note}}",
     "editItem": "Edit item",
@@ -147,7 +148,11 @@
     "choosePhoto": "Choose from gallery",
     "removePhoto": "Remove photo",
     "uploading": "Uploading…",
-    "goodsCost": "Goods cost (without shipping)"
+    "goodsCost": "Goods cost (without shipping)",
+    "filterMissing": "Not arrived",
+    "notArrived": "Not arrived",
+    "notArrivedBanner": "{{count}} of {{total}} pcs never arrived. They are not counted in the cost, the stock value or the sales target.",
+    "received": "Received"
   },
   "history": {
     "title": "History",
@@ -205,7 +210,9 @@
     "margin": "margin",
     "soldOut": "Sold out",
     "lowStockItems": "Low stock items",
-    "sellerOnlyHint": "You see your own numbers. The owner sees everyone."
+    "sellerOnlyHint": "You see your own numbers. The owner sees everyone.",
+    "notArrived": "Not arrived (claim from supplier)",
+    "notArrivedSub": "{{items}} items · {{pcs}} pcs · not counted in the $ cost"
   },
   "settings": {
     "title": "Settings",

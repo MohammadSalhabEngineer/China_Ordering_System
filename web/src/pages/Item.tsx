@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Pencil, SlidersHorizontal, Camera, Image as ImageIcon, Trash2 } from "lucide-react";
-import { fetchItem, fetchMovements, useAsync, itemName, personName, shortRef } from "../lib/data";
+import { fetchItem, fetchMovements, useAsync, itemName, personName, shortRef, missingQty, receivedQty, isNotArrived } from "../lib/data";
 import { supabase, explainError } from "../lib/supabase";
 import { uploadItemPhoto, removeItemPhoto } from "../lib/photos";
 import { useAuth } from "../lib/auth";
@@ -46,7 +46,17 @@ export default function ItemPage() {
           ) : undefined
         }
       />
-      <Photo path={it.photo_path} alt={itemName(it, i18n.language)} className="w-full aspect-square max-h-[60vw] sm:max-h-80 object-contain bg-white" />
+      <div className="relative">
+        <Photo path={it.photo_path} alt={itemName(it, i18n.language)} className="w-full aspect-square max-h-[60vw] sm:max-h-80 object-contain bg-white" />
+        {isNotArrived(it) && (
+          <div
+            className="absolute inset-0 flex items-end justify-center pb-4"
+            style={{ background: "linear-gradient(to top, rgba(185,28,28,0.85) 0%, rgba(185,28,28,0.35) 50%, rgba(185,28,28,0.05) 100%)" }}
+          >
+            <span className="rounded-full bg-white/95 text-bad font-bold uppercase tracking-wide px-4 py-1.5 shadow">{t("stock.notArrived")}</span>
+          </div>
+        )}
+      </div>
       {isOwner && (
         <PhotoEditor
           item={it}
@@ -67,12 +77,18 @@ export default function ItemPage() {
             </p>
             {it.description_zh && <p className="text-xs text-muted mt-1">{t("stock.chinese")}: {it.description_zh}</p>}
           </div>
-          <StockBadge stock={it.stock_qty} initial={it.initial_qty} />
+          <StockBadge stock={it.stock_qty} initial={it.initial_qty} missing={missingQty(it)} />
         </div>
+        {missingQty(it) > 0 && (
+          <p className="mt-3 rounded-xl border border-bad/30 text-bad text-sm p-3 font-medium" style={{ background: "linear-gradient(90deg, #fee2e2, #fff5f5)" }}>
+            {t("stock.notArrivedBanner", { count: missingQty(it), total: it.initial_qty })}
+          </p>
+        )}
         {it.needs_review && <p className="mt-3 rounded-xl bg-amber-50 text-warn text-sm p-3">{t("stock.needsReview", { note: it.needs_review })}</p>}
 
         <dl className="card mt-4 grid grid-cols-2 gap-x-4 gap-y-3 p-4 text-sm">
-          <Stat label={t("stock.left", { count: it.stock_qty })} value={`${int(it.stock_qty)} / ${int(it.initial_qty)}`} />
+          <Stat label={t("stock.left", { count: it.stock_qty })} value={`${int(it.stock_qty)} / ${int(receivedQty(it))}`} />
+          {missingQty(it) > 0 && <Stat label={t("stock.notArrived")} value={`${int(missingQty(it))} / ${int(it.initial_qty)}`} />}
           <Stat label={t("stock.sold", { count: sold })} value={int(sold)} />
           <Stat label={t("stock.sellPrice")} value={money(it.default_price_usd)} />
           {isOwner && <Stat label={t("stock.landedCost")} value={money(cost)} />}
