@@ -28,9 +28,9 @@ OUT_INTERNAL = ROOT / "bassel china_missing_items (internal).pdf"
 
 NOT_RECEIVED = [
     "2-21", "2-29", "2-32", "2-33", "2-34", "3-6", "3-17", "3-19", "3-21", "3-22",
-    "4-1", "9-14", "11-1", "11-2", "15-3", "15-5", "17-10", "38-3",
+    "4-1", "9-14", "10-10", "10-11", "10-12", "10-13", "11-1", "11-2", "15-3", "15-5", "17-10", "38-3",
 ]
-REPORT_DATE = "6 November 2026"
+REPORT_DATE = "17 November 2026"
 
 # figures printed on the original TOTAL line (page 37)
 SHEET_TOTAL = {"cartons": 580, "rmb": 296554.00, "cbm": 70.0, "kg": 11791, "usd": 44195.93, "landed": 70000.00}
@@ -68,7 +68,8 @@ def grid_lines(page: pymupdf.Page) -> list[float]:
             elif it[0] == "re" and it[1].height < 1.5:
                 y = round(it[1].y0, 1)
                 ys[y] = ys.get(y, 0) + it[1].width
-    return sorted(y for y, length in ys.items() if length > 700)
+    # > 650 also catches row lines that stop at the photo column (two rows sharing one photo cell)
+    return sorted(y for y, length in ys.items() if length > 650)
 
 
 def row_bands(doc: pymupdf.Document, refs: set[str]) -> dict[str, tuple[int, float, float]]:
@@ -126,20 +127,36 @@ def patch_total_line(page: pymupdf.Page, t: dict) -> None:
     replace_span(page, "70,000.00", money(t["landed"]), size=6.0)
 
 
-def scrub(page: pymupdf.Page, rects: list[pymupdf.Rect], *, images: bool = True, graphics: bool = False) -> None:
-    """Permanently delete text (and optionally photos / lines) inside `rects`.
+def scrub(page: pymupdf.Page, rects: list[pymupdf.Rect], *, images: bool = True,
+          keep: list[pymupdf.Rect] | None = None, center_tol: float = 0.0) -> None:
+    """Permanently delete the text inside `rects`, and the photos that belong there.
 
     Clipping alone only hides content; the hidden text could still be copied out of the
-    file. Everything a reader must not get is removed before the page is reused.
+    file. A photo is removed only if its centre is in a removed area and it does not reach
+    into a kept area (two rows can share one photo cell, also across a page break).
     """
+    rects = [r for r in rects if not r.is_empty and r.is_valid]
     for r in rects:
-        if r.is_empty:
-            continue
         page.add_redact_annot(r, fill=False)
-    page.apply_redactions(
-        images=pymupdf.PDF_REDACT_IMAGE_REMOVE if images else pymupdf.PDF_REDACT_IMAGE_NONE,
-        graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_TOUCHED if graphics else pymupdf.PDF_REDACT_LINE_ART_NONE,
-    )
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE,
+                          text=pymupdf.PDF_REDACT_TEXT_REMOVE)
+    if not images:
+        return
+    keep = keep or []
+    victims = []
+    for info in page.get_image_info():
+        b = pymupdf.Rect(info["bbox"])
+        c = pymupdf.Point((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2)
+        if not any(c in pymupdf.Rect(r.x0, r.y0 - center_tol, r.x1, r.y1 + center_tol) for r in rects):
+            continue
+        if any((b & k).height > 2 and (b & k).width > 2 for k in keep):
+            continue
+        victims.append(pymupdf.Rect(b.x0 + 2, b.y0 + 2, b.x1 - 2, b.y1 - 2))  # inset: never touch neighbours
+    for v in victims:
+        page.add_redact_annot(v, fill=False)
+    if victims:
+        page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE,
+                              text=pymupdf.PDF_REDACT_TEXT_NONE)
 
 
 def keep_only(doc: pymupdf.Document, bands: dict, *, cols: list[tuple[float, float]], title_only: bool) -> None:
@@ -168,7 +185,10 @@ def keep_only(doc: pymupdf.Document, bands: dict, *, cols: list[tuple[float, flo
             rects.append(pymupdf.Rect(0, start + 1, x_max, top - 1))
             start = bot
         rects.append(pymupdf.Rect(0, start + 1, x_max, data_end - 1))
-        scrub(page, rects, images=True)
+        kept = [pymupdf.Rect(0, top, x_max, bot) for top, bot in by_page.get(pno, [])]
+        if pno == 0:
+            kept.append(pymupdf.Rect(0, 0, SUPPLIER_X1, HEADER_BOT))  # logo / title
+        scrub(page, rects, images=True, keep=kept)
 
 
 # --------------------------------------------------------------------------- composition
@@ -292,7 +312,8 @@ def main() -> None:
     patch_total_line(a[-1], arrived)
     # delete the removed rows' text and photos, so they are gone, not just hidden
     for ref, (pno, top, bot) in bands.items():
-        scrub(a[pno], [pymupdf.Rect(0, top + 1, PAGE_W, bot - 1)], images=True)
+        # photo centres can sit on the row line when a photo cell spans a page break
+        scrub(a[pno], [pymupdf.Rect(0, top + 1, PAGE_W, bot - 1)], images=True, center_tol=3)
     note_y = 150.6 + 14
     write_lines(a[-1], 21, note_y, [
         (f"Updated {REPORT_DATE}: received goods only. {m['items']} items ({m['cartons']} cartons, {m['pcs']:,} pcs, "
